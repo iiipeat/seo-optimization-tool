@@ -100,10 +100,7 @@ google = None
 client_id = app.config.get('GOOGLE_CLIENT_ID')
 client_secret = app.config.get('GOOGLE_CLIENT_SECRET')
 
-if (client_id and client_secret and 
-    not client_id.startswith('demo_') and 
-    not client_secret.startswith('demo_') and
-    '.apps.googleusercontent.com' in client_id):
+if client_id and client_secret:
     try:
         google = oauth.register(
             name='google',
@@ -119,12 +116,12 @@ if (client_id and client_secret and
                 'token_endpoint_auth_method': 'client_secret_post'
             }
         )
-        print("✅ Google OAuth initialized successfully with real credentials")
+        logger.info("✅ Google OAuth initialized successfully with real credentials")
     except Exception as e:
-        print(f"⚠️ Google OAuth initialization failed: {e}")
+        logger.error(f"⚠️ Google OAuth initialization failed: {e}")
         google = None
 else:
-    print("ℹ️ Google OAuth not configured - only email/password authentication available")
+    logger.info("ℹ️ Google OAuth not configured - only email/password authentication available")
 
 # User loader for Flask-Login
 @login_manager.user_loader
@@ -1219,6 +1216,18 @@ def check_keyword_ranking(keyword, domain):
     except Exception as e:
         print(f"Error checking ranking: {e}")
         return None
+
+# Initialize database tables when app starts
+def init_db():
+    with app.app_context():
+        db.create_all()
+        logger.info("Database tables created successfully")
+
+# Initialize database on import (works with gunicorn)
+try:
+    init_db()
+except Exception as e:
+    logger.warning(f"Database initialization warning: {e}")
 
 @app.errorhandler(404)
 def not_found(error):
