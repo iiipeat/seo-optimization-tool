@@ -674,7 +674,7 @@ def analyze_page_seo(url, is_professional=False):
                 'h3_tags': [],  # No H3 tags for Starter
                 'word_count': word_count,
                 'image_count': len(images),
-                'images_without_alt': len(images_without_alt),  # Just count, not list
+                'images_without_alt': images_without_alt,  # Already a count (integer)
                 'issues': issues[:5],  # Only top 5 issues
                 'recommendations': recommendations[:3],  # Only top 3 recommendations
                 'score': score,
