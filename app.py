@@ -734,16 +734,17 @@ def subscribe(plan_name):
     try:
         # For development/testing: simulate payment process if Stripe not configured properly
         if app.config['STRIPE_SECRET_KEY'].startswith('sk_test_51234567890'):
-            if plan_name == 'starter':
-                # Starter plan should not be reached here - redirect to signup for trial
-                flash('Starter plan includes a 7-day free trial. Please sign up to start your trial.', 'info')
-                return redirect(url_for('signup'))
-            else:
-                flash(f'✅ DEMO MODE: Successfully "subscribed" to {plan["name"]} plan (${plan["amount"]/100:.2f}/month). This is a simulation - configure real Stripe keys for actual payments.', 'success')
-                current_user.plan = plan_name
-                current_user.subscription_status = 'active'
-                db.session.commit()
-                return redirect(url_for('dashboard'))
+            # Demo mode - simulate subscription for both plans
+            interval_text = 'week' if plan_name == 'starter' else 'month'
+            flash(f'✅ DEMO MODE: Successfully "subscribed" to {plan["name"]} (${plan["amount"]/100:.2f}/{interval_text}). This is a simulation - configure real Stripe keys for actual payments.', 'success')
+            
+            # Update user's plan in database
+            current_user.plan = plan_name
+            current_user.subscription_status = 'active'
+            current_user.trial_end = None  # End trial when subscribing
+            db.session.commit()
+            
+            return redirect(url_for('dashboard'))
         
         # Create or retrieve Stripe customer
         if current_user.stripe_customer_id:
@@ -1113,6 +1114,32 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('index'))
+
+@app.route('/test-plan/<plan_name>')
+@login_required
+def test_plan_switch(plan_name):
+    """Test route to quickly switch plans in demo mode"""
+    # Only allow in demo mode
+    if not app.config['STRIPE_SECRET_KEY'].startswith('sk_test_51234567890'):
+        flash('This feature is only available in demo mode.', 'warning')
+        return redirect(url_for('dashboard'))
+    
+    if plan_name not in ['starter', 'professional', 'trial']:
+        flash('Invalid plan name.', 'error')
+        return redirect(url_for('dashboard'))
+    
+    if plan_name == 'trial':
+        current_user.plan = 'starter'
+        current_user.trial_end = datetime.utcnow() + timedelta(days=7)
+        flash('✅ TEST MODE: Switched to 7-day trial.', 'success')
+    else:
+        current_user.plan = plan_name
+        current_user.trial_end = None
+        current_user.subscription_status = 'active'
+        flash(f'✅ TEST MODE: Switched to {plan_name.title()} plan. Test the different features!', 'success')
+    
+    db.session.commit()
+    return redirect(url_for('dashboard'))
 
 @app.route('/dashboard')
 @login_required
