@@ -106,14 +106,9 @@ if client_id and client_secret:
             name='google',
             client_id=client_id,
             client_secret=client_secret,
-            authorize_url='https://accounts.google.com/o/oauth2/auth',
-            authorize_params=None,
-            access_token_url='https://accounts.google.com/o/oauth2/token',
-            access_token_params=None,
-            refresh_token_url=None,
+            server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
             client_kwargs={
-                'scope': 'openid email profile',
-                'token_endpoint_auth_method': 'client_secret_post'
+                'scope': 'openid email profile'
             }
         )
         logger.info("✅ Google OAuth initialized successfully with real credentials")
@@ -1022,14 +1017,17 @@ def google_callback():
     try:
         token = google.authorize_access_token()
         
-        # Get user info from Google's userinfo endpoint
-        resp = google.get('https://www.googleapis.com/oauth2/v2/userinfo', token=token)
-        user_info = resp.json()
+        # Parse the ID token to get user info
+        user_info = token.get('userinfo')
+        if not user_info:
+            # Fallback to making a request to userinfo endpoint
+            nonce = session.get('google_auth_nonce')
+            user_info = google.parse_id_token(token, nonce=nonce)
         
         if user_info and 'email' in user_info:
             email = user_info['email'].lower()
             name = user_info.get('name', email.split('@')[0])
-            google_id = user_info['id']  # Changed from 'sub' to 'id' for v2 API
+            google_id = user_info.get('sub', user_info.get('id'))  # 'sub' is standard, 'id' is fallback
             
             # Check if user exists
             user = User.query.filter_by(email=email).first()
@@ -1055,7 +1053,9 @@ def google_callback():
             return redirect(url_for('dashboard'))
         
     except Exception as e:
-        flash('Google authentication failed. Please try again.', 'danger')
+        logger.error(f"Google OAuth callback error: {str(e)}")
+        logger.error(f"Full error: {traceback.format_exc()}")
+        flash(f'Google authentication failed: {str(e)}. Please try again or use email/password login.', 'danger')
     
     return redirect(url_for('login'))
 
