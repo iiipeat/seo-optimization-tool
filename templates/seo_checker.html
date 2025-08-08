@@ -1,0 +1,524 @@
+{% extends "base.html" %}
+
+{% block title %}Free SEO Checker - On-Page SEO Analysis Tool{% endblock %}
+{% block description %}Free on-page SEO checker to analyze your website. Get instant SEO audit with title tags, meta descriptions, headers, and optimization recommendations.{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="d-flex align-items-center mb-4">
+                <i class="bi bi-check-circle text-success me-3" style="font-size: 2rem;"></i>
+                <div>
+                    <h1 class="h2 mb-1">On-Page SEO Checker</h1>
+                    <p class="text-muted mb-0">Analyze any webpage for SEO optimization opportunities</p>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <form id="seo-form">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label for="url" class="form-label fw-semibold">
+                                    <i class="bi bi-globe me-1"></i>Website URL to Analyze
+                                </label>
+                                <input type="url" class="form-control form-control-lg" id="url" 
+                                       placeholder="https://example.com/page" 
+                                       autocomplete="off">
+                                <div class="form-text">Enter the full URL including https://</div>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-success btn-lg w-100" id="analyze-btn">
+                                    <i class="bi bi-search me-2"></i>Analyze SEO
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="loading" class="text-center py-5" style="display: none;">
+                <div class="spinner-border text-success me-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="h5 text-muted">Analyzing webpage...</div>
+                <small class="text-muted">This may take a few seconds</small>
+            </div>
+            
+            <!-- Results -->
+            <div id="results" style="display: none;">
+                <!-- SEO Score -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body text-center p-4">
+                        <h3 class="h4 mb-3">
+                            <i class="bi bi-speedometer2 me-2"></i>SEO Score
+                        </h3>
+                        <div class="position-relative d-inline-block">
+                            <canvas id="scoreChart" width="120" height="120"></canvas>
+                            <div class="position-absolute top-50 start-50 translate-middle">
+                                <div id="score-value" class="h2 fw-bold mb-0">--</div>
+                                <small class="text-muted">/ 100</small>
+                            </div>
+                        </div>
+                        <div id="score-description" class="mt-3 fw-semibold">--</div>
+                    </div>
+                </div>
+                
+                <div class="row g-4">
+                    <!-- SEO Elements -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-header bg-light border-0">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-code-square me-2 text-primary"></i>SEO Elements
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="seo-elements">
+                                    <!-- Dynamic content -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Content Analysis -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-header bg-light border-0">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-file-text me-2 text-info"></i>Content Analysis
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="content-analysis">
+                                    <!-- Dynamic content -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Issues and Recommendations -->
+                <div class="row g-4 mt-2">
+                    <div class="col-md-6">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-danger-subtle border-0">
+                                <h5 class="mb-0 text-danger">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>Issues Found
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="issues-list">
+                                    <!-- Dynamic content -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-success-subtle border-0">
+                                <h5 class="mb-0 text-success">
+                                    <i class="bi bi-lightbulb me-2"></i>Recommendations
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="recommendations-list">
+                                    <!-- Dynamic content -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Export Options -->
+                <div class="mt-4 text-center">
+                    <button class="btn btn-outline-primary" onclick="exportReport()">
+                        <i class="bi bi-download me-2"></i>Export Report
+                    </button>
+                    <button class="btn btn-outline-secondary ms-2" onclick="printReport()">
+                        <i class="bi bi-printer me-2"></i>Print Report
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Error State -->
+            <div id="error-message" class="alert alert-danger" style="display: none;">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <span id="error-text"></span>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="position-sticky" style="top: 20px;">
+                <!-- What We Check -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-light border-0">
+                        <h5 class="mb-0">
+                            <i class="bi bi-list-check me-2 text-success"></i>What We Check
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                Title tag optimization
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                Meta description quality
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                Header tag structure (H1, H2, H3)
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                Content length and quality
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                Image alt attributes
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                URL structure
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- SEO Tips -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-light border-0">
+                        <h5 class="mb-0">
+                            <i class="bi bi-lightbulb me-2 text-warning"></i>SEO Tips
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6 class="fw-semibold">Title Tags</h6>
+                            <small class="text-muted">Keep between 30-60 characters, include main keyword</small>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="fw-semibold">Meta Description</h6>
+                            <small class="text-muted">Write compelling 120-160 character descriptions</small>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="fw-semibold">Headers</h6>
+                            <small class="text-muted">Use one H1, multiple H2s for structure</small>
+                        </div>
+                        <div>
+                            <h6 class="fw-semibold">Content</h6>
+                            <small class="text-muted">Aim for 300+ words of quality content</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Score Guide -->
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-light border-0">
+                        <h5 class="mb-0">
+                            <i class="bi bi-info-circle me-2 text-info"></i>Score Guide
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <span class="badge bg-success me-2">90-100</span>
+                            <small>Excellent SEO</small>
+                        </div>
+                        <div class="mb-2">
+                            <span class="badge bg-primary me-2">70-89</span>
+                            <small>Good SEO</small>
+                        </div>
+                        <div class="mb-2">
+                            <span class="badge bg-warning me-2">50-69</span>
+                            <small>Needs improvement</small>
+                        </div>
+                        <div>
+                            <span class="badge bg-danger me-2">0-49</span>
+                            <small>Poor SEO</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let currentAnalysis = null;
+
+document.getElementById('seo-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const url = document.getElementById('url').value.trim();
+    if (!url) {
+        showError('Please enter a URL');
+        return;
+    }
+    
+    showLoading();
+    hideError();
+    
+    try {
+        const response = await fetch('/api/seo-analysis', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ url: url })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            currentAnalysis = data;
+            displayResults(data);
+        } else {
+            showError(data.error || 'Failed to analyze URL');
+        }
+    } catch (error) {
+        showError('Network error. Please try again.');
+    } finally {
+        hideLoading();
+    }
+});
+
+function showLoading() {
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('analyze-btn').disabled = true;
+}
+
+function hideLoading() {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('analyze-btn').disabled = false;
+}
+
+function showError(message) {
+    document.getElementById('error-text').textContent = message;
+    document.getElementById('error-message').style.display = 'block';
+    document.getElementById('results').style.display = 'none';
+}
+
+function hideError() {
+    document.getElementById('error-message').style.display = 'none';
+}
+
+function displayResults(analysis) {
+    // Update score
+    const score = analysis.score || 0;
+    document.getElementById('score-value').textContent = score;
+    
+    const scoreDescription = score >= 90 ? 'Excellent' :
+                           score >= 70 ? 'Good' :
+                           score >= 50 ? 'Needs Work' : 'Poor';
+    document.getElementById('score-description').textContent = scoreDescription;
+    document.getElementById('score-description').className = `mt-3 fw-semibold ${
+        score >= 90 ? 'text-success' :
+        score >= 70 ? 'text-primary' :
+        score >= 50 ? 'text-warning' : 'text-danger'
+    }`;
+    
+    // Draw score chart
+    drawScoreChart(score);
+    
+    // Update SEO elements
+    const seoElements = document.getElementById('seo-elements');
+    seoElements.innerHTML = `
+        <div class="mb-3">
+            <h6 class="fw-semibold">Title Tag</h6>
+            <p class="small mb-1">${escapeHtml(analysis.title || 'Not found')}</p>
+            <div class="progress" style="height: 6px;">
+                <div class="progress-bar ${analysis.title_length >= 30 && analysis.title_length <= 60 ? 'bg-success' : 'bg-warning'}" 
+                     style="width: ${Math.min(100, (analysis.title_length / 60) * 100)}%"></div>
+            </div>
+            <small class="text-muted">${analysis.title_length} characters</small>
+        </div>
+        
+        <div class="mb-3">
+            <h6 class="fw-semibold">Meta Description</h6>
+            <p class="small mb-1">${escapeHtml(analysis.meta_description || 'Not found')}</p>
+            <div class="progress" style="height: 6px;">
+                <div class="progress-bar ${analysis.meta_description_length >= 120 && analysis.meta_description_length <= 160 ? 'bg-success' : 'bg-warning'}" 
+                     style="width: ${Math.min(100, (analysis.meta_description_length / 160) * 100)}%"></div>
+            </div>
+            <small class="text-muted">${analysis.meta_description_length} characters</small>
+        </div>
+        
+        <div>
+            <h6 class="fw-semibold">Header Tags</h6>
+            <div class="mb-2">
+                <span class="badge ${(analysis.h1_tags || []).length === 1 ? 'bg-success' : 'bg-warning'} me-2">H1</span>
+                <small>${(analysis.h1_tags || []).length} found</small>
+            </div>
+            <div class="mb-2">
+                <span class="badge bg-info me-2">H2</span>
+                <small>${(analysis.h2_tags || []).length} found</small>
+            </div>
+            <div>
+                <span class="badge bg-secondary me-2">H3</span>
+                <small>${(analysis.h3_tags || []).length} found</small>
+            </div>
+        </div>
+    `;
+    
+    // Update content analysis
+    const contentAnalysis = document.getElementById('content-analysis');
+    contentAnalysis.innerHTML = `
+        <div class="mb-3">
+            <h6 class="fw-semibold">Word Count</h6>
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="h4 mb-0 ${analysis.word_count >= 300 ? 'text-success' : 'text-warning'}">${analysis.word_count}</span>
+                <small class="text-muted">words</small>
+            </div>
+            <div class="progress mt-2" style="height: 6px;">
+                <div class="progress-bar ${analysis.word_count >= 300 ? 'bg-success' : 'bg-warning'}" 
+                     style="width: ${Math.min(100, (analysis.word_count / 500) * 100)}%"></div>
+            </div>
+            <small class="text-muted">Minimum recommended: 300 words</small>
+        </div>
+        
+        ${analysis.image_count !== undefined ? `
+        <div class="mb-3">
+            <h6 class="fw-semibold">Images</h6>
+            <div class="d-flex justify-content-between">
+                <span>Total: <strong>${analysis.image_count}</strong></span>
+                <span class="${analysis.images_without_alt === 0 ? 'text-success' : 'text-warning'}">
+                    Missing Alt: <strong>${analysis.images_without_alt || 0}</strong>
+                </span>
+            </div>
+        </div>
+        ` : ''}
+        
+        <div>
+            <h6 class="fw-semibold">URL Analysis</h6>
+            <p class="small text-break mb-1">${escapeHtml(analysis.url)}</p>
+            <small class="text-muted">Length: ${analysis.url.length} characters</small>
+        </div>
+    `;
+    
+    // Update issues
+    const issuesList = document.getElementById('issues-list');
+    const issues = analysis.issues || [];
+    if (issues.length === 0) {
+        issuesList.innerHTML = '<p class="text-muted mb-0"><i class="bi bi-check-circle text-success me-2"></i>No major issues found!</p>';
+    } else {
+        issuesList.innerHTML = issues.map(issue => 
+            `<div class="mb-2">
+                <i class="bi bi-x-circle text-danger me-2"></i>
+                <small>${escapeHtml(issue)}</small>
+            </div>`
+        ).join('');
+    }
+    
+    // Update recommendations
+    const recommendationsList = document.getElementById('recommendations-list');
+    const recommendations = analysis.recommendations || [];
+    if (recommendations.length === 0) {
+        recommendationsList.innerHTML = '<p class="text-muted mb-0"><i class="bi bi-trophy text-success me-2"></i>Great job! No specific recommendations.</p>';
+    } else {
+        recommendationsList.innerHTML = recommendations.map(rec => 
+            `<div class="mb-2">
+                <i class="bi bi-lightbulb text-warning me-2"></i>
+                <small>${escapeHtml(rec)}</small>
+            </div>`
+        ).join('');
+    }
+    
+    document.getElementById('results').style.display = 'block';
+    
+    // Scroll to results
+    document.getElementById('results').scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+    });
+}
+
+function drawScoreChart(score) {
+    const canvas = document.getElementById('scoreChart');
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 45;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Background circle
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#e9ecef';
+    ctx.lineWidth = 8;
+    ctx.stroke();
+    
+    // Score arc
+    const startAngle = -Math.PI / 2;
+    const endAngle = startAngle + (score / 100) * 2 * Math.PI;
+    
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+    ctx.strokeStyle = score >= 90 ? '#198754' :
+                     score >= 70 ? '#0d6efd' :
+                     score >= 50 ? '#ffc107' : '#dc3545';
+    ctx.lineWidth = 8;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+}
+
+function exportReport() {
+    if (!currentAnalysis) return;
+    
+    const reportData = {
+        url: currentAnalysis.url,
+        score: currentAnalysis.score,
+        timestamp: new Date().toISOString(),
+        title: currentAnalysis.title,
+        title_length: currentAnalysis.title_length,
+        meta_description: currentAnalysis.meta_description,
+        meta_description_length: currentAnalysis.meta_description_length,
+        word_count: currentAnalysis.word_count,
+        h1_count: (currentAnalysis.h1_tags || []).length,
+        h2_count: (currentAnalysis.h2_tags || []).length,
+        issues: currentAnalysis.issues || [],
+        recommendations: currentAnalysis.recommendations || []
+    };
+    
+    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `seo-report-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+}
+
+function printReport() {
+    window.print();
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, m => map[m]);
+}
+
+// Auto-focus on URL input
+document.getElementById('url').focus();
+</script>
+{% endblock %}

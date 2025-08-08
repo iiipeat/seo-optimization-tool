@@ -1,0 +1,394 @@
+{% extends "base.html" %}
+
+{% block title %}Free Keyword Research Tool - Find SEO Keywords{% endblock %}
+{% block description %}Free keyword research tool to find profitable keywords for SEO. Get search volume, keyword difficulty, and CPC data to optimize your content strategy.{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header bg-light py-4">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-2">
+                        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                        <li class="breadcrumb-item active">Keyword Research</li>
+                    </ol>
+                </nav>
+                <div class="d-flex align-items-center">
+                    <div class="page-icon bg-primary text-white me-3">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <div>
+                        <h1 class="h2 mb-1 fw-bold">Keyword Research Tool</h1>
+                        <p class="text-muted mb-0">Discover profitable keywords to boost your SEO strategy</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <div class="d-flex gap-2 justify-content-lg-end">
+                    <a href="{{ url_for('seo_checker') }}" class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-speedometer2 me-1"></i>SEO Checker
+                    </a>
+                    <a href="{{ url_for('rank_tracker') }}" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-graph-up me-1"></i>Rank Tracker
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Search Form -->
+            
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <form id="keyword-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label for="keyword" class="form-label fw-semibold">
+                                    <i class="bi bi-lightbulb me-1"></i>Enter Seed Keyword
+                                </label>
+                                <input type="text" class="form-control form-control-lg" id="keyword" 
+                                       placeholder="e.g., digital marketing, best laptops, how to..." 
+                                       autocomplete="off">
+                                <div class="form-text">Enter a main topic or keyword to find related opportunities</div>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary btn-lg w-100" id="research-btn">
+                                    <i class="bi bi-search me-2"></i>Research Keywords
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="loading" class="text-center py-5" style="display: none;">
+                <div class="spinner-border text-primary me-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="h5 text-muted">Analyzing keywords...</div>
+            </div>
+            
+            <!-- Results -->
+            <div id="results" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="h4 mb-0">
+                        <i class="bi bi-list-ul me-2 text-success"></i>Keyword Suggestions
+                    </h3>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="exportResults()">
+                        <i class="bi bi-download me-1"></i>Export CSV
+                    </button>
+                </div>
+                
+                <div class="card shadow-sm border-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">
+                                        <i class="bi bi-key me-1"></i>Keyword
+                                    </th>
+                                    <th scope="col" class="text-center">
+                                        <i class="bi bi-bar-chart me-1"></i>Search Volume
+                                    </th>
+                                    <th scope="col" class="text-center">
+                                        <i class="bi bi-speedometer me-1"></i>Difficulty
+                                    </th>
+                                    <th scope="col" class="text-center">
+                                        <i class="bi bi-currency-dollar me-1"></i>CPC
+                                    </th>
+                                    <th scope="col" class="text-center">
+                                        <i class="bi bi-graph-up me-1"></i>Trend
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="keywords-table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Data is estimated and for informational purposes. Use multiple sources for accurate keyword research.
+                    </small>
+                </div>
+            </div>
+            
+            <!-- Error State -->
+            <div id="error-message" class="alert alert-danger" style="display: none;">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <span id="error-text"></span>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="position-sticky" style="top: 20px;">
+                <!-- How to Use -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-light border-0">
+                        <h5 class="mb-0">
+                            <i class="bi bi-question-circle me-2 text-info"></i>How to Use
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ol class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <span class="badge bg-primary rounded-pill me-2">1</span>
+                                Enter a seed keyword related to your niche
+                            </li>
+                            <li class="mb-2">
+                                <span class="badge bg-primary rounded-pill me-2">2</span>
+                                Click "Research Keywords" to get suggestions
+                            </li>
+                            <li class="mb-2">
+                                <span class="badge bg-primary rounded-pill me-2">3</span>
+                                Review search volume and difficulty scores
+                            </li>
+                            <li class="mb-2">
+                                <span class="badge bg-primary rounded-pill me-2">4</span>
+                                Focus on keywords with good volume and low difficulty
+                            </li>
+                            <li>
+                                <span class="badge bg-primary rounded-pill me-2">5</span>
+                                Export results for further analysis
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <!-- Tips -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-light border-0">
+                        <h5 class="mb-0">
+                            <i class="bi bi-lightbulb me-2 text-warning"></i>Pro Tips
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Target long-tail keywords (3+ words) for easier ranking
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Look for keywords with high volume, low difficulty
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Consider user intent behind each keyword
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Use question-based keywords for content ideas
+                            </li>
+                            <li>
+                                <i class="bi bi-check text-success me-2"></i>
+                                Check what's ranking for your target keywords
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Difficulty Legend -->
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-light border-0">
+                        <h5 class="mb-0">
+                            <i class="bi bi-speedometer me-2 text-info"></i>Difficulty Scale
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <span class="badge bg-success me-2">0-30</span>
+                            <small>Easy - Great for new sites</small>
+                        </div>
+                        <div class="mb-2">
+                            <span class="badge bg-warning me-2">31-70</span>
+                            <small>Medium - Need good content</small>
+                        </div>
+                        <div class="mb-0">
+                            <span class="badge bg-danger me-2">71-100</span>
+                            <small>Hard - Requires authority</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let currentResults = [];
+
+document.getElementById('keyword-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const keyword = document.getElementById('keyword').value.trim();
+    if (!keyword) {
+        showError('Please enter a keyword');
+        return;
+    }
+    
+    showLoading();
+    hideError();
+    
+    try {
+        // Get CSRF token
+        const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+        
+        const response = await fetch('/api/keyword-research', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ keyword: keyword })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            currentResults = data.keywords;
+            displayResults(data.keywords);
+        } else {
+            showError(data.error || 'Failed to fetch keyword data');
+        }
+    } catch (error) {
+        showError('Network error. Please try again.');
+    } finally {
+        hideLoading();
+    }
+});
+
+function showLoading() {
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('research-btn').disabled = true;
+}
+
+function hideLoading() {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('research-btn').disabled = false;
+}
+
+function showError(message) {
+    document.getElementById('error-text').textContent = message;
+    document.getElementById('error-message').style.display = 'block';
+    document.getElementById('results').style.display = 'none';
+}
+
+function hideError() {
+    document.getElementById('error-message').style.display = 'none';
+}
+
+function displayResults(keywords) {
+    const tbody = document.getElementById('keywords-table');
+    tbody.innerHTML = '';
+    
+    keywords.forEach((keyword, index) => {
+        const difficultyClass = keyword.difficulty < 30 ? 'success' : 
+                               keyword.difficulty < 70 ? 'warning' : 'danger';
+        
+        // Debug: log trend value
+        console.log('Keyword:', keyword.keyword, 'Trend:', keyword.trend);
+        
+        let trendDisplay = '';
+        if (keyword.trend === 'up') {
+            trendDisplay = '<i class="bi bi-arrow-up-circle text-success"></i>';
+        } else if (keyword.trend === 'down') {
+            trendDisplay = '<i class="bi bi-arrow-down-circle text-danger"></i>';
+        } else {
+            trendDisplay = '<i class="bi bi-dash-circle text-muted"></i>';
+        }
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>
+                <strong>${escapeHtml(keyword.keyword)}</strong>
+                ${index === 0 ? '<span class="badge bg-primary ms-2">Seed</span>' : ''}
+            </td>
+            <td class="text-center">
+                <span class="fw-semibold">${keyword.search_volume}</span>
+            </td>
+            <td class="text-center">
+                <span class="badge bg-${difficultyClass}">${keyword.difficulty}</span>
+            </td>
+            <td class="text-center">
+                <span class="text-success fw-semibold">${keyword.cpc}</span>
+            </td>
+            <td class="text-center">
+                ${trendDisplay}
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+    
+    document.getElementById('results').style.display = 'block';
+    
+    // Scroll to results
+    document.getElementById('results').scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+    });
+}
+
+function exportResults() {
+    if (currentResults.length === 0) return;
+    
+    const csvContent = [
+        ['Keyword', 'Search Volume', 'Difficulty', 'CPC', 'Trend'],
+        ...currentResults.map(row => [
+            row.keyword,
+            row.search_volume,
+            row.difficulty,
+            row.cpc,
+            row.trend
+        ])
+    ].map(row => row.map(field => `"${field}"`).join(',')).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `keyword-research-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+}
+
+function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, m => map[m]);
+}
+
+// Auto-focus on keyword input  
+document.getElementById('keyword').focus();
+
+// Handle Enter key in keyword input
+document.getElementById('keyword').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('keyword-form').dispatchEvent(new Event('submit'));
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,647 @@
+{% extends "base.html" %}
+
+{% block title %}SEO Tools - Free SEO Analysis, Keyword Research & Rank Tracking{% endblock %}
+
+{% block content %}
+<!-- Modern Hero Section -->
+<div class="hero-section position-relative overflow-hidden">
+    <div class="hero-background"></div>
+    <div class="container position-relative">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="display-3 fw-bold text-dark mb-4">
+                        Boost Your Website's 
+                        <span class="text-gradient">SEO Performance</span>
+                    </h1>
+                    <p class="lead text-muted mb-4 fs-5">
+                        Professional SEO analysis tools that help you research keywords, 
+                        optimize content, and track rankings. Get started with our powerful SEO toolkit.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 mb-4">
+                        <a href="{{ url_for('keyword_research') }}" class="btn btn-primary btn-lg px-4 py-3">
+                            <i class="bi bi-search me-2"></i>Start Keyword Research
+                        </a>
+                        <a href="#pricing" class="btn btn-primary btn-lg px-4 py-3">
+                            <i class="bi bi-crown me-2"></i>View Pricing
+                        </a>
+                    </div>
+                    <div class="d-flex align-items-center text-muted small">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        <span>Professional SEO tools • Comprehensive analytics • Trusted by thousands</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image-container text-center">
+                    <div class="hero-dashboard">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0">SEO Score</h6>
+                                    <span class="badge bg-success">Excellent</span>
+                                </div>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="score-circle">
+                                    <div class="score-number">94</div>
+                                    <div class="score-label">/ 100</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="floating-elements">
+                            <div class="floating-card card-1">
+                                <i class="bi bi-search"></i>
+                                <span>Keywords Found</span>
+                                <strong>247</strong>
+                            </div>
+                            <div class="floating-card card-2">
+                                <i class="bi bi-graph-up"></i>
+                                <span>Rank Improved</span>
+                                <strong>+15</strong>
+                            </div>
+                            <div class="floating-card card-3">
+                                <i class="bi bi-speedometer2"></i>
+                                <span>Page Speed</span>
+                                <strong>Fast</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tools Section -->
+<section class="tools-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Powerful SEO Tools at Your Fingertips</h2>
+            <p class="lead text-muted">Everything you need to improve your website's search engine visibility</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Keyword Research Tool -->
+            <div class="col-lg-4">
+                <div class="tool-card h-100">
+                    <div class="tool-header">
+                        <div class="tool-icon bg-primary">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <div class="tool-badge">
+                            <span class="badge bg-primary-soft text-primary">7-Day Trial</span>
+                        </div>
+                    </div>
+                    <div class="tool-body">
+                        <h3 class="h4 fw-bold mb-3">Keyword Research</h3>
+                        <p class="text-muted mb-4">
+                            Discover profitable keywords with search volume data, competition analysis, 
+                            and long-tail variations to boost your content strategy.
+                        </p>
+                        <div class="tool-features mb-4">
+                            <div class="feature-item">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                <span>Search volume estimates</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                <span>Keyword difficulty scoring</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                <span>Related keyword suggestions</span>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('keyword_research') }}" class="btn btn-primary w-100">
+                            <i class="bi bi-search me-2"></i>Start Research
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEO Checker Tool -->
+            <div class="col-lg-4">
+                <div class="tool-card h-100">
+                    <div class="tool-header">
+                        <div class="tool-icon bg-success">
+                            <i class="bi bi-speedometer2"></i>
+                        </div>
+                        <div class="tool-badge">
+                            <span class="badge bg-success-soft text-success">Pro Features</span>
+                        </div>
+                    </div>
+                    <div class="tool-body">
+                        <h3 class="h4 fw-bold mb-3">SEO Analyzer</h3>
+                        <p class="text-muted mb-4">
+                            Get comprehensive on-page SEO analysis with actionable recommendations 
+                            to improve your website's search engine performance.
+                        </p>
+                        <div class="tool-features mb-4">
+                            <div class="feature-item">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                <span>Complete SEO audit</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                <span>Technical SEO analysis</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                <span>Optimization recommendations</span>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('seo_checker') }}" class="btn btn-success w-100">
+                            <i class="bi bi-speedometer2 me-2"></i>Analyze Site
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Rank Tracker Tool -->
+            <div class="col-lg-4">
+                <div class="tool-card h-100">
+                    <div class="tool-header">
+                        <div class="tool-icon bg-info">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <div class="tool-badge">
+                            <span class="badge bg-info-soft text-info">Premium Tool</span>
+                        </div>
+                    </div>
+                    <div class="tool-body">
+                        <h3 class="h4 fw-bold mb-3">Rank Tracker</h3>
+                        <p class="text-muted mb-4">
+                            Monitor your keyword rankings over time and track your SEO progress 
+                            with detailed position tracking and historical data.
+                        </p>
+                        <div class="tool-features mb-4">
+                            <div class="feature-item">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                <span>Real-time rank tracking</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                <span>Historical data</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                <span>Progress monitoring</span>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('rank_tracker') }}" class="btn btn-info w-100">
+                            <i class="bi bi-graph-up me-2"></i>Track Rankings
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section bg-light py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="pe-lg-4">
+                    <h2 class="display-6 fw-bold text-dark mb-4">Why Choose Our SEO Tools?</h2>
+                    <p class="lead text-muted mb-4">
+                        Professional-grade SEO analysis without the premium price tag. 
+                        Get the insights you need to improve your search rankings.
+                    </p>
+                    
+                    <div class="features-list">
+                        <div class="feature-row">
+                            <div class="feature-item">
+                                <div class="feature-icon-small bg-success">
+                                    <i class="bi bi-gift"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h6 class="mb-1">7-Day Free Trial</h6>
+                                    <small class="text-muted">Full access to all features, no credit card required</small>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon-small bg-primary">
+                                    <i class="bi bi-lightning"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h6 class="mb-1">Instant Results</h6>
+                                    <small class="text-muted">Get SEO insights in seconds, not minutes</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-row">
+                            <div class="feature-item">
+                                <div class="feature-icon-small bg-info">
+                                    <i class="bi bi-person-x"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h6 class="mb-1">No Registration</h6>
+                                    <small class="text-muted">Start analyzing immediately without signing up</small>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon-small bg-warning">
+                                    <i class="bi bi-shield-check"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h6 class="mb-1">Privacy Focused</h6>
+                                    <small class="text-muted">We don't store or track your data</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-row">
+                            <div class="feature-item">
+                                <div class="feature-icon-small bg-danger">
+                                    <i class="bi bi-phone"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h6 class="mb-1">Mobile Optimized</h6>
+                                    <small class="text-muted">Works perfectly on all devices</small>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon-small bg-secondary">
+                                    <i class="bi bi-lightbulb"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h6 class="mb-1">Actionable Insights</h6>
+                                    <small class="text-muted">Get specific recommendations to improve</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="stats-showcase">
+                    <div class="stats-header">
+                        <h4 class="fw-bold text-dark mb-3">Trusted by Thousands</h4>
+                        <p class="text-muted">Join website owners who improved their SEO</p>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="stat-card">
+                                    <div class="stat-icon bg-primary-soft">
+                                        <i class="bi bi-search text-primary"></i>
+                                    </div>
+                                    <div class="stat-number" data-count="25000">0</div>
+                                    <div class="stat-label">Keywords Analyzed</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card">
+                                    <div class="stat-icon bg-success-soft">
+                                        <i class="bi bi-speedometer2 text-success"></i>
+                                    </div>
+                                    <div class="stat-number" data-count="12500">0</div>
+                                    <div class="stat-label">Websites Audited</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card">
+                                    <div class="stat-icon bg-info-soft">
+                                        <i class="bi bi-graph-up text-info"></i>
+                                    </div>
+                                    <div class="stat-number" data-count="8750">0</div>
+                                    <div class="stat-label">Rankings Tracked</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card">
+                                    <div class="stat-icon bg-warning-soft">
+                                        <i class="bi bi-people text-warning"></i>
+                                    </div>
+                                    <div class="stat-number" data-count="3200">0</div>
+                                    <div class="stat-label">Happy Users</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Trusted Partners Section -->
+<section class="py-5 bg-white border-top border-bottom">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h3 class="h5 text-dark mb-4 fw-semibold">Trusted by teams at industry-leading companies</h3>
+                <div class="partners-grid d-flex flex-wrap justify-content-center align-items-center gap-3 gap-md-4">
+                    
+                    <div class="partner-logo-container">
+                        <span class="company-name">Google</span>
+                    </div>
+
+                    <div class="partner-logo-container">
+                        <span class="company-name">Microsoft</span>
+                    </div>
+
+                    <div class="partner-logo-container">
+                        <span class="company-name">Amazon</span>
+                    </div>
+
+                    <div class="partner-logo-container">
+                        <span class="company-name">Meta</span>
+                    </div>
+
+                    <div class="partner-logo-container">
+                        <span class="company-name">Anthropic</span>
+                    </div>
+
+                    <div class="partner-logo-container">
+                        <span class="company-name">Stripe</span>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section id="pricing" class="pricing-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Choose Your Plan</h2>
+            <p class="lead text-muted">Start with a 7-day free trial, then choose the plan that fits your needs</p>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            <!-- Starter Plan -->
+            <div class="col-lg-4">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="h4 fw-bold">Starter</h3>
+                        <p class="text-muted">Perfect for small websites</p>
+                        <div class="price">
+                            <span class="price-amount">$9</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                    </div>
+                    <div class="pricing-features">
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>10 keyword queries/day</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>5 SEO reports/day</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>Track up to 25 keywords</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>Basic support</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>Export to CSV</span>
+                        </div>
+                    </div>
+                    <div class="pricing-footer">
+                        <a href="{{ url_for('signup') }}" class="btn btn-primary w-100">Start Free Trial</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Professional Plan (Most Popular) -->
+            <div class="col-lg-4">
+                <div class="pricing-card pricing-card-popular">
+                    <div class="popular-badge">
+                        <span class="badge bg-primary text-white">Most Popular</span>
+                    </div>
+                    <div class="pricing-header">
+                        <h3 class="h4 fw-bold">Professional</h3>
+                        <p class="text-muted">For growing businesses</p>
+                        <div class="price">
+                            <span class="price-amount">$29</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                    </div>
+                    <div class="pricing-features">
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>100 keyword queries/day</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>25 SEO reports/day</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>Track up to 250 keywords</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>Competitor analysis</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>White-label reports</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>Priority support</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>API access</span>
+                        </div>
+                    </div>
+                    <div class="pricing-footer">
+                        <a href="{{ url_for('subscribe', plan_name='professional') }}" class="btn btn-primary w-100">Subscribe Now</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Enterprise Plan -->
+            <div class="col-lg-4">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="h4 fw-bold">Enterprise</h3>
+                        <p class="text-muted">For agencies & teams</p>
+                        <div class="price">
+                            <span class="price-amount">$99</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                    </div>
+                    <div class="pricing-features">
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>Unlimited keyword queries</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>Unlimited SEO reports</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>Unlimited keyword tracking</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>Advanced SERP tracking</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>Team collaboration</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>Custom integrations</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span>Dedicated account manager</span>
+                        </div>
+                    </div>
+                    <div class="pricing-footer">
+                        <a href="{{ url_for('subscribe', plan_name='enterprise') }}" class="btn btn-primary w-100">Subscribe Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <p class="text-muted">
+                <i class="bi bi-shield-check text-success me-2"></i>
+                All plans include 7-day free trial • No setup fees • Cancel anytime
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section py-5">
+    <div class="container">
+        <div class="cta-card">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="cta-content">
+                        <h2 class="display-6 fw-bold text-white mb-3">
+                            Ready to Dominate Search Rankings?
+                        </h2>
+                        <p class="lead text-white-50 mb-4">
+                            Join thousands of marketers and agencies who trust our SEO platform. 
+                            Start your free trial today - no credit card required.
+                        </p>
+                        <div class="cta-features d-flex flex-wrap gap-4 mb-4">
+                            <div class="d-flex align-items-center text-white-50">
+                                <i class="bi bi-check-circle text-white me-2"></i>
+                                <span>7-Day Trial</span>
+                            </div>
+                            <div class="d-flex align-items-center text-white-50">
+                                <i class="bi bi-check-circle text-white me-2"></i>
+                                <span>Instant Results</span>
+                            </div>
+                            <div class="d-flex align-items-center text-white-50">
+                                <i class="bi bi-check-circle text-white me-2"></i>
+                                <span>No Credit Card</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-lg-center">
+                    <div class="cta-buttons">
+                        <a href="{{ url_for('keyword_research') }}" class="btn btn-light btn-lg w-100 mb-3">
+                            <i class="bi bi-search me-2"></i>Start Keyword Research
+                        </a>
+                        <a href="{{ url_for('seo_checker') }}" class="btn btn-outline-light btn-lg w-100">
+                            <i class="bi bi-speedometer2 me-2"></i>Analyze Your Website
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.stats-grid .stat-item {
+    transition: transform 0.2s ease-in-out;
+}
+
+.stats-grid .stat-item:hover {
+    transform: scale(1.05);
+}
+
+/* Trusted Partners */
+.partner-logo-container {
+    padding: 12px 24px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.partner-logo-container:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: white;
+}
+
+.company-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #495057;
+    letter-spacing: 0.5px;
+}
+
+.partners-grid {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .partners-grid {
+        gap: 0.75rem !important;
+    }
+    
+    .partner-logo-container {
+        padding: 8px 16px;
+    }
+    
+    .company-name {
+        font-size: 0.8rem;
+    }
+}
+</style>
+{% endblock %}
