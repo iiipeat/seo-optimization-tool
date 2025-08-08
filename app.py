@@ -546,10 +546,27 @@ def analyze_page_seo(url, is_professional=False):
     """Analyze on-page SEO factors with plan-based limitations"""
     try:
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'DNT': '1',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1'
         }
         
-        response = requests.get(url, headers=headers, timeout=15)
+        # Increase timeout and add retry logic
+        try:
+            response = requests.get(url, headers=headers, timeout=30, allow_redirects=True, verify=True)
+        except requests.exceptions.Timeout:
+            return {'error': 'The website took too long to respond (timeout after 30 seconds). This might be due to the site being slow or blocking automated requests. Try a different URL or check if the site is accessible.'}
+        except requests.exceptions.SSLError:
+            # Try without SSL verification for sites with certificate issues
+            try:
+                response = requests.get(url, headers=headers, timeout=30, allow_redirects=True, verify=False)
+            except:
+                return {'error': 'SSL certificate verification failed. The website may have security certificate issues.'}
+        
         response.raise_for_status()
         
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -684,10 +701,20 @@ def analyze_page_seo(url, is_professional=False):
             'limited': False
         }
         
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 403:
+            return {'error': 'Access denied (403). The website is blocking automated requests. Try a different URL or analyze your own website.'}
+        elif e.response.status_code == 404:
+            return {'error': 'Page not found (404). Please check the URL and try again.'}
+        else:
+            return {'error': f'HTTP error {e.response.status_code}: The website returned an error. Please try again.'}
+    except requests.exceptions.ConnectionError:
+        return {'error': 'Connection error. Could not reach the website. Please check the URL and your internet connection.'}
     except requests.exceptions.RequestException as e:
-        return {'error': f'Failed to fetch URL: {str(e)}'}
+        return {'error': f'Request failed: {str(e)}. The website may be blocking automated analysis or experiencing issues.'}
     except Exception as e:
-        return {'error': f'Failed to analyze page: {str(e)}'}
+        logger.error(f"SEO analysis error for {url}: {str(e)}")
+        return {'error': 'Unable to analyze this website. It may have anti-scraping measures or require special access. Try analyzing a different website.'}
 
 @app.route('/rank-tracker')
 @login_required
