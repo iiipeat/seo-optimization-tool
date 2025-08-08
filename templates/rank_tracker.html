@@ -40,6 +40,7 @@
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body p-4">
                     <form id="keyword-form" class="row g-3">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <div class="col-md-5">
                             <label for="keyword" class="form-label fw-semibold">
                                 <i class="bi bi-search me-1"></i>Keyword
@@ -317,11 +318,15 @@ async function submitKeyword(keyword, domain) {
     showLoading();
     hideError();
     
+    // Get CSRF token
+    const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+    
     try {
         const response = await fetch('/api/add-keyword', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
             },
             body: JSON.stringify({ keyword: keyword, domain: domain })
         });
@@ -456,9 +461,15 @@ function updateStats(keywords) {
 async function deleteKeyword(keywordId) {
     if (!confirm('Are you sure you want to delete this keyword?')) return;
     
+    // Get CSRF token
+    const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+    
     try {
         const response = await fetch(`/api/delete-keyword/${keywordId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': csrfToken
+            }
         });
         
         if (response.ok) {

@@ -19,8 +19,9 @@
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body p-4">
                     <form id="seo-form">
-                        <div class="row g-3">
-                            <div class="col-md-8">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-lg-9 col-md-8">
                                 <label for="url" class="form-label fw-semibold">
                                     <i class="bi bi-globe me-1"></i>Website URL to Analyze
                                 </label>
@@ -29,8 +30,8 @@
                                        autocomplete="off">
                                 <div class="form-text">Enter the full URL including https://</div>
                             </div>
-                            <div class="col-md-4 d-flex align-items-end">
-                                <button type="submit" class="btn btn-success btn-lg w-100" id="analyze-btn">
+                            <div class="col-lg-3 col-md-4">
+                                <button type="submit" class="btn btn-success btn-lg w-100" id="analyze-btn" style="height: 48px;">
                                     <i class="bi bi-search me-2"></i>Analyze SEO
                                 </button>
                             </div>
@@ -267,11 +268,15 @@ document.getElementById('seo-form').addEventListener('submit', async function(e)
     showLoading();
     hideError();
     
+    // Get CSRF token
+    const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+    
     try {
         const response = await fetch('/api/seo-analysis', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
             },
             body: JSON.stringify({ url: url })
         });

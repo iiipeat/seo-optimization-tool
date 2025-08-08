@@ -49,8 +49,8 @@
                 <div class="card-body p-4">
                     <form id="keyword-form">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                        <div class="row g-3">
-                            <div class="col-md-8">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-lg-9 col-md-8">
                                 <label for="keyword" class="form-label fw-semibold">
                                     <i class="bi bi-lightbulb me-1"></i>Enter Seed Keyword
                                 </label>
@@ -59,8 +59,8 @@
                                        autocomplete="off">
                                 <div class="form-text">Enter a main topic or keyword to find related opportunities</div>
                             </div>
-                            <div class="col-md-4 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary btn-lg w-100" id="research-btn">
+                            <div class="col-lg-3 col-md-4">
+                                <button type="submit" class="btn btn-primary btn-lg w-100" id="research-btn" style="height: 48px;">
                                     <i class="bi bi-search me-2"></i>Research Keywords
                                 </button>
                             </div>
