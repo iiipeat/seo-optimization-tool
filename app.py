@@ -189,12 +189,38 @@ class User(UserMixin, db.Model):
     def get_plan_limits(self):
         limits = {
             'trial': {'keyword_queries': 50, 'seo_reports': 20, 'tracked_keywords': 100},
-            'starter': {'keyword_queries': 10, 'seo_reports': 5, 'tracked_keywords': 25},
-            'professional': {'keyword_queries': 100, 'seo_reports': 25, 'tracked_keywords': 250},
-            'enterprise': {'keyword_queries': -1, 'seo_reports': -1, 'tracked_keywords': -1}  # -1 = unlimited
+            'starter': {'keyword_queries': 25, 'seo_reports': 5, 'tracked_keywords': 10},  # Weekly limits
+            'professional': {'keyword_queries': 500, 'seo_reports': 50, 'tracked_keywords': 100}  # Monthly limits
         }
         current_plan = 'trial' if self.is_trial_active() else self.plan
         return limits.get(current_plan, limits['starter'])
+    
+    def is_professional(self):
+        """Check if user has professional plan"""
+        return self.plan == 'professional' and not self.is_trial_active()
+    
+    def can_export_csv(self):
+        """Check if user can export CSV files"""
+        return self.is_professional() or self.is_trial_active()
+    
+    def can_access_historical_data(self):
+        """Check if user can access historical data beyond 7 days"""
+        return self.is_professional() or self.is_trial_active()
+    
+    def can_track_more_keywords(self):
+        """Check if user can track more keywords"""
+        limits = self.get_plan_limits()
+        current_tracked = TrackedKeyword.query.filter_by(user_id=self.id).count()
+        return current_tracked < limits['tracked_keywords']
+    
+    def get_plan_display_name(self):
+        """Get display name for current plan"""
+        if self.is_trial_active():
+            return "Trial"
+        elif self.plan == 'professional':
+            return "Professional"
+        else:
+            return "Starter"
     
     def reset_daily_usage_if_needed(self):
         today = datetime.utcnow().date()
@@ -486,8 +512,9 @@ def api_seo_analysis():
             'cached': True
         })
     
-    # Perform new analysis
-    analysis = analyze_page_seo(url)
+    # Perform new analysis with plan-based limitations
+    is_professional = current_user.is_professional()
+    analysis = analyze_page_seo(url, is_professional)
     
     if 'error' in analysis:
         return jsonify(analysis), 400
@@ -515,8 +542,8 @@ def api_seo_analysis():
     
     return jsonify(analysis)
 
-def analyze_page_seo(url):
-    """Analyze on-page SEO factors"""
+def analyze_page_seo(url, is_professional=False):
+    """Analyze on-page SEO factors with plan-based limitations"""
     try:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -616,6 +643,29 @@ def analyze_page_seo(url):
         
         score = max(0, score)
         
+        # Limit data for Starter users
+        if not is_professional:
+            # Starter users get basic report only
+            return {
+                'url': url,
+                'title': title_text,
+                'title_length': len(title_text),
+                'meta_description': meta_desc_text,
+                'meta_description_length': len(meta_desc_text),
+                'h1_tags': h1_tags[:1],  # Only first H1
+                'h2_tags': [],  # No H2 tags for Starter
+                'h3_tags': [],  # No H3 tags for Starter
+                'word_count': word_count,
+                'image_count': len(images),
+                'images_without_alt': len(images_without_alt),  # Just count, not list
+                'issues': issues[:5],  # Only top 5 issues
+                'recommendations': recommendations[:3],  # Only top 3 recommendations
+                'score': score,
+                'limited': True,
+                'upgrade_message': 'Upgrade to Professional for complete SEO analysis including all heading tags, detailed recommendations, and advanced insights.'
+            }
+        
+        # Professional users get full report
         return {
             'url': url,
             'title': title_text,
@@ -630,7 +680,8 @@ def analyze_page_seo(url):
             'images_without_alt': images_without_alt,
             'issues': issues,
             'recommendations': recommendations,
-            'score': score
+            'score': score,
+            'limited': False
         }
         
     except requests.exceptions.RequestException as e:
@@ -661,19 +712,16 @@ def subscribe(plan_name):
     # Define plan configurations
     plans = {
         'starter': {
-            'price_id': 'price_starter_monthly',  # Replace with actual Stripe price ID
+            'price_id': 'price_starter_weekly',  # Replace with actual Stripe price ID
             'name': 'Starter Plan',
-            'amount': 900,  # $9.00 in cents
+            'amount': 900,  # $9.00 per week in cents
+            'interval': 'week'
         },
         'professional': {
             'price_id': 'price_professional_monthly',  # Replace with actual Stripe price ID
             'name': 'Professional Plan', 
-            'amount': 2900,  # $29.00 in cents
-        },
-        'enterprise': {
-            'price_id': 'price_enterprise_monthly',  # Replace with actual Stripe price ID
-            'name': 'Enterprise Plan',
-            'amount': 9900,  # $99.00 in cents
+            'amount': 2900,  # $29.00 per month in cents
+            'interval': 'month'
         }
     }
     
@@ -1112,6 +1160,14 @@ def api_add_keyword():
     
     # Clean domain
     domain = domain.replace('https://', '').replace('http://', '').replace('www.', '').strip('/')
+    
+    # Check if user can track more keywords
+    if not current_user.can_track_more_keywords():
+        limits = current_user.get_plan_limits()
+        return jsonify({
+            'error': f'Keyword limit reached. {current_user.get_plan_display_name()} plan allows {limits["tracked_keywords"]} keywords.',
+            'upgrade_required': True
+        }), 403
     
     # Check if already tracking this keyword for this domain for this user
     existing = TrackedKeyword.query.filter_by(keyword=keyword, domain=domain, user_id=current_user.id).first()

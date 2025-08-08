@@ -14,22 +14,11 @@
                 </h1>
                 <p class="lead text-muted mb-4">
                     Start with a 7-day free trial, then choose the plan that fits your needs. 
-                    All plans include our core SEO tools with different usage limits.
+                    <strong>Professional saves you $7/month vs Starter!</strong>
                 </p>
                 <div class="d-flex justify-content-center align-items-center text-muted mb-4">
                     <i class="bi bi-check-circle text-success me-2"></i>
                     <span>7-day free trial • No credit card required • Cancel anytime</span>
-                </div>
-                
-                <!-- Billing Toggle moved inside hero -->
-                <div class="billing-toggle d-flex align-items-center justify-content-center mt-4 mb-4">
-                    <span class="me-3 fw-medium">Monthly</span>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="billingToggle">
-                        <label class="form-check-label" for="billingToggle"></label>
-                    </div>
-                    <span class="ms-3 fw-medium">Annual</span>
-                    <span class="badge bg-success ms-2">Save 20%</span>
                 </div>
                 
                 <!-- Pricing Cards moved into same section -->
@@ -39,41 +28,39 @@
                 <div class="pricing-card h-100">
                     <div class="pricing-header">
                         <h3 class="h4 fw-bold">Starter</h3>
-                        <p class="text-muted">Perfect for small websites</p>
+                        <p class="text-muted">Perfect for beginners</p>
                         <div class="price">
-                            <span class="price-amount monthly-price">$9</span>
-                            <span class="price-amount annual-price" style="display: none;">$7</span>
-                            <span class="price-period">/month</span>
+                            <span class="price-amount">$9</span>
+                            <span class="price-period">/week</span>
                         </div>
                         <p class="small text-muted">
-                            <span class="monthly-billing">Billed monthly</span>
-                            <span class="annual-billing" style="display: none;">$84 billed annually</span>
+                            Billed weekly (~$36/month)
                         </p>
                     </div>
                     <div class="pricing-features">
                         <div class="feature-item">
                             <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>10 keyword queries/day</span>
+                            <span>25 keyword searches/week</span>
                         </div>
                         <div class="feature-item">
                             <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>5 SEO reports/day</span>
+                            <span>5 SEO reports/week</span>
                         </div>
                         <div class="feature-item">
                             <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>Track up to 25 keywords</span>
+                            <span>Track up to 10 keywords</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-x-circle text-muted me-2"></i>
+                            <span class="text-muted"><s>CSV export</s></span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-x-circle text-muted me-2"></i>
+                            <span class="text-muted"><s>Full SEO analysis</s></span>
                         </div>
                         <div class="feature-item">
                             <i class="bi bi-check-circle text-success me-2"></i>
                             <span>Basic support</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>Export to CSV</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>Mobile optimized tools</span>
                         </div>
                     </div>
                     <div class="pricing-footer">
@@ -92,29 +79,36 @@
                     </div>
                     <div class="pricing-header">
                         <h3 class="h4 fw-bold">Professional</h3>
-                        <p class="text-muted">For growing businesses</p>
+                        <span class="badge bg-success mb-2">BEST VALUE</span>
+                        <p class="text-muted">For serious marketers</p>
                         <div class="price">
-                            <span class="price-amount monthly-price">$29</span>
-                            <span class="price-amount annual-price" style="display: none;">$23</span>
+                            <span class="price-amount">$29</span>
                             <span class="price-period">/month</span>
                         </div>
                         <p class="small text-muted">
-                            <span class="monthly-billing">Billed monthly</span>
-                            <span class="annual-billing" style="display: none;">$276 billed annually</span>
+                            <strong>Save $7/month vs Starter!</strong>
                         </p>
                     </div>
                     <div class="pricing-features">
                         <div class="feature-item">
                             <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>100 keyword queries/day</span>
+                            <span><strong>500 keyword searches/month</strong></span>
                         </div>
                         <div class="feature-item">
                             <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>25 SEO reports/day</span>
+                            <span><strong>50 SEO reports/month</strong></span>
                         </div>
                         <div class="feature-item">
                             <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>Track up to 250 keywords</span>
+                            <span><strong>Track up to 100 keywords</strong></span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span><strong>CSV export included</strong></span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <span><strong>Full SEO analysis</strong></span>
                         </div>
                         <div class="feature-item">
                             <i class="bi bi-check-circle text-success me-2"></i>
@@ -139,64 +133,6 @@
                     </div>
                     <div class="pricing-footer">
                         <a href="{{ url_for('subscribe', plan_name='professional') }}" class="btn btn-primary w-100 btn-lg">
-                            Subscribe Now
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Enterprise Plan -->
-            <div class="col-lg-4">
-                <div class="pricing-card h-100">
-                    <div class="pricing-header">
-                        <h3 class="h4 fw-bold">Enterprise</h3>
-                        <p class="text-muted">For agencies & teams</p>
-                        <div class="price">
-                            <span class="price-amount monthly-price">$99</span>
-                            <span class="price-amount annual-price" style="display: none;">$79</span>
-                            <span class="price-period">/month</span>
-                        </div>
-                        <p class="small text-muted">
-                            <span class="monthly-billing">Billed monthly</span>
-                            <span class="annual-billing" style="display: none;">$948 billed annually</span>
-                        </p>
-                    </div>
-                    <div class="pricing-features">
-                        <div class="feature-item">
-                            <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>Unlimited keyword queries</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>Unlimited SEO reports</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>Unlimited keyword tracking</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>Advanced SERP tracking</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>Team collaboration</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>Custom integrations</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>Dedicated account manager</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="bi bi-check-circle text-success me-2"></i>
-                            <span>Custom reporting</span>
-                        </div>
-                    </div>
-                    <div class="pricing-footer">
-                        <a href="{{ url_for('subscribe', plan_name='enterprise') }}" class="btn btn-primary w-100 btn-lg">
                             Subscribe Now
                         </a>
                     </div>

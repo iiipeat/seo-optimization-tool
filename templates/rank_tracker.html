@@ -13,10 +13,25 @@
                     <i class="bi bi-bar-chart text-info me-3" style="font-size: 2rem;"></i>
                     <div>
                         <h1 class="h2 mb-1">Rank Tracker</h1>
-                        <p class="text-muted mb-0">Monitor your keyword rankings over time</p>
+                        <p class="text-muted mb-0">
+                            Monitor your keyword rankings over time
+                            {% if current_user.is_authenticated %}
+                                {% set limits = current_user.get_plan_limits() %}
+                                {% set current_count = keywords|length %}
+                                <span class="badge {% if current_count >= limits.tracked_keywords %}bg-danger{% else %}bg-success{% endif %} ms-2">
+                                    {{ current_count }}/{{ limits.tracked_keywords }} keywords
+                                </span>
+                                {% if not current_user.is_professional() and current_count >= limits.tracked_keywords %}
+                                    <a href="{{ url_for('pricing') }}" class="badge bg-warning text-dark ms-1">Upgrade for more</a>
+                                {% endif %}
+                            {% endif %}
+                        </p>
                     </div>
                 </div>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addKeywordModal">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addKeywordModal"
+                        {% if current_user.is_authenticated and not current_user.can_track_more_keywords() %}
+                        onclick="showUpgradeModal('Track More Keywords'); return false;"
+                        {% endif %}>
                     <i class="bi bi-plus-circle me-2"></i>Add Keyword
                 </button>
             </div>
@@ -504,6 +519,57 @@ function escapeHtml(text) {
         "'": '&#039;'
     };
     return text.replace(/[&<>"']/g, m => map[m]);
+}
+
+function showUpgradeModal(feature) {
+    // Create modal HTML
+    const modalHTML = `
+        <div class="modal fade" id="upgradeModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="bi bi-lock-fill text-warning me-2"></i>
+                            Professional Feature
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-crown text-warning" style="font-size: 3rem;"></i>
+                        </div>
+                        <h4>${feature} - Professional Only</h4>
+                        <p class="text-muted">Upgrade to Professional to unlock:</p>
+                        <ul class="list-unstyled">
+                            <li><i class="bi bi-check-circle text-success me-2"></i>Track up to 100 keywords</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>Historical ranking data</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>CSV export capabilities</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>Priority support</li>
+                        </ul>
+                        <div class="alert alert-info">
+                            <strong>Better Value:</strong> Professional is only $29/month<br>
+                            <small>(Starter is $9/week = ~$36/month)</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Maybe Later</button>
+                        <a href="{{ url_for('pricing') }}" class="btn btn-primary">
+                            <i class="bi bi-arrow-up-circle me-1"></i>View Plans
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to page if not exists
+    if (!document.getElementById('upgradeModal')) {
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('upgradeModal'));
+    modal.show();
 }
 </script>
 {% endblock %}
